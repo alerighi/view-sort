@@ -32,7 +32,7 @@ int delay = 1000;;
 struct thread_args {
   int *array;
   int length;
-  char *algoritmo;
+  void (*algoritmo)(int*, int);
 };
 
 #define HEAPSIZE(H) H[0]
@@ -283,32 +283,36 @@ int* random_array(int length, int maxval)
 void* sort_thread_start(void *args)
 {
   struct thread_args *sort_args = (struct thread_args *) args;
-  if (sort_args->algoritmo != NULL) {
-    if (!strcmp(sort_args->algoritmo, "insertion")) {
-      delay *= 3;
-      insertion_sort(sort_args->array, sort_args->length);
-    } else if (!strcmp(sort_args->algoritmo, "bubble")) {
-      bubble_sort(sort_args->array, sort_args->length);
-    } else if (!strcmp(sort_args->algoritmo, "radix")) {
-      delay *= 2;
-      radix_sort(sort_args->array, sort_args->length);
-    } else if (!strcmp(sort_args->algoritmo, "quick")) {
-      delay *= 5;
-      quick_sort(sort_args->array, sort_args->length);
-    } else if (!strcmp(sort_args->algoritmo, "merge")) {
-      delay *= 3;
-      merge_sort(sort_args->array, sort_args->length);
-    } else if (!strcmp(sort_args->algoritmo, "heap")) {
-      delay *= 3;
-      heap_sort(sort_args->array, sort_args->length);
-    } else {
-      printf("Algoritmo di sorting non valido!\n");
-      exit(1);
-    }
-  } else {
-    merge_sort(sort_args->array, sort_args->length);
-  }
+  sort_args->algoritmo(sort_args->array, sort_args->length);
   return NULL;
+}
+
+void (*get_algorithm(char *algoritmo))(int*, int)
+{
+   if (algoritmo != NULL) {
+    if (!strcmp(algoritmo, "insertion")) {
+      delay *= 3;
+      return insertion_sort;
+    } else if (!strcmp(algoritmo, "bubble")) {
+      delay *= 3;
+      return bubble_sort;
+    } else if (!strcmp(algoritmo, "radix")) {
+      delay *= 2;
+      return radix_sort;
+    } else if (!strcmp(algoritmo, "quick")) {
+      delay *= 5;
+      return quick_sort;
+    } else if (!strcmp(algoritmo, "merge")) {
+      delay *= 3;
+      return merge_sort;
+    } else if (!strcmp(algoritmo, "heap")) {
+      delay *= 3;
+      return heap_sort;
+    } else {
+      printf("Algoritmo specificato non valido! Uso merge sort!\n");
+    }
+   }
+   return merge_sort;
 }
 
 void usage() {
@@ -338,11 +342,13 @@ int main(int argc, char **argv)
 
   pthread_t sort_thread;
 
-  char *algoritmo = NULL;
-  char title[100] = "merge sort";
+  char *algoritmo = "merge";
+  char title[100];
   
   char c;
   int i;
+
+  void (*sort_algorithm)(int*, int);
   
   while ((c = getopt(argc, argv, "a:hs:n:")) != -1) {
     switch (c) {
@@ -373,13 +379,11 @@ int main(int argc, char **argv)
   }
 
   delay = delay*1000/length;
+  sort_algorithm = get_algorithm(algoritmo);
   
+  strcpy(title, algoritmo);
+  strcat(title, " sort");
   
-  if (algoritmo) {
-    strcpy(title, algoritmo);
-    strcat(title, " sort");
-  }
-
   SDL_Init(SDL_INIT_VIDEO);
 
   SDL_Window *win = SDL_CreateWindow(title, 100, 100, WIN_WIDTH, WIN_HEIGHT, 0);
@@ -388,7 +392,7 @@ int main(int argc, char **argv)
   struct thread_args args;
   args.array = array;
   args.length = length;
-  args.algoritmo = algoritmo;
+  args.algoritmo = sort_algorithm;
   pthread_create(&sort_thread, NULL, sort_thread_start, (void *) &args);
   
   while (running) {
