@@ -309,16 +309,16 @@ void (*get_algorithm(char *algoritmo))(int*, int)
 
 void usage(void)
 {
-   printf("usage: visualsort [-asnh]\n"
-	     "-a  [algoritmo] algorimi disponibili:\n"
-	     "  * bubble\n"
-	     "  * insertion\n"
-	     "  * merge\n"
-	     "  * heap\n"
-	     "  * quick\n"
-	     "  * radox\n"
-	     "-s  velocità di avanzamento (0-200, default 50)\n"
-	     "-n  numero elementi array (10-1000, default 1000)\n");
+   printf("usage: view_sort [-asnh]\n"
+	  "   -a  [algoritmo] algorimi disponibili:\n"
+	  "      * bubble\n"
+	  "      * insertion\n"
+	  "      * merge\n"
+	  "      * heap\n"
+	  "      * quick\n"
+	  "      * radox\n"
+	  "   -s  velocità di avanzamento (0-200, default 50)\n"
+	  "   -n  numero elementi array (10-1000, default 1000)\n");
       exit(EXIT_SUCCESS);
 }
 
@@ -364,6 +364,7 @@ int main(int argc, char **argv)
       }
       break;
     case 'h':
+    default:
       usage();
     }
   }
