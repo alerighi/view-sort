@@ -6,7 +6,7 @@ RM=rm -rf
 
 all: $(EXE)
 
-${EXE}: $(SRC)
+$(EXE): $(SRC)
 	$(CC) $(SRC) -o $(EXE) $(CFLAGS)
 
 clean:
