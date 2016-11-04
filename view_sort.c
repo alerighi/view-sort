@@ -36,44 +36,40 @@ struct thread_args {
 
 #define HEAPSIZE(H) H[0]
 
-void heapify(int *heap, int node) {
+void heapify(int *heap, int heapsize, int node) {
   int left = 2*node;
   int right = 2*node+1;
   int largest;
 
-  if (left > HEAPSIZE(heap) || heap[node] >= heap[left]) {
+  if (left > heapsize || heap[node-1] >= heap[left-1]) {
     largest = node;
   } else {
     largest = left;
   }
 
-  if (right <= HEAPSIZE(heap) && heap[right] > heap[largest]) {
+  if (right <= heapsize && heap[right-1] > heap[largest-1]) {
     largest = right;
   }
 
   if (node != largest) {
-    SWAP(heap[node], heap[largest]);
-    heapify(heap, largest);
+    SWAP(heap[node-1], heap[largest-1]);
+    heapify(heap, heapsize, largest);
   }
 }
 
-void build_heap(int *heap) {
-  for (int i = HEAPSIZE(heap)/2; i > 0; i--) {
-    heapify(heap, i);
+void build_heap(int *heap, int heapsize) {
+  for (int i = heapsize/2; i > 0; i--) {
+    heapify(heap, heapsize, i);
   }
 }
 
-void heap_sort(int *array, int length) {
-  int *heap = realloc(array, (length+1)*sizeof(int));
-  SWAP(heap[0], heap[length]);
-  HEAPSIZE(heap) = length;
+void heap_sort(int *heap, int heapsize) {
+  build_heap(heap, heapsize);
 
-  build_heap(heap);
-
-  for (int i = length; i > 1; i--) {
-    SWAP(heap[1], heap[i]);
-    HEAPSIZE(heap) -= 1;
-    heapify(heap, 1);
+  for (int i = heapsize; i > 1; i--) {
+    SWAP(heap[0], heap[i-1]);
+    heapsize -= 1;
+    heapify(heap, heapsize, 1);
   }
 }
 
