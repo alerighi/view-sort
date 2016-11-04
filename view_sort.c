@@ -158,14 +158,10 @@ void merge(int *array, int p, int q, int r, int *tmp)
 void _merge_sort(int *array, int p, int r, int *tmp)
 {
   if (p < r) {
-    if (r-p < 30) {
-      insertion_sort(array+p, r-p+1);
-    } else {
-      int q = (p+r)/2;
-      _merge_sort(array, p, q, tmp);
-      _merge_sort(array, q+1, r, tmp);
-      merge(array, p, q, r, tmp);
-    }
+    int q = (p+r)/2;
+    _merge_sort(array, p, q, tmp);
+    _merge_sort(array, q+1, r, tmp);
+    merge(array, p, q, r, tmp);
   }
 }
 
@@ -191,7 +187,7 @@ void bubble_sort(int *array, int length)
 
 int partition(int *array, int p, int r)
 {
-  int x = array[p]; // scelgo il pivot come il primo elemento dell'array
+  int x = array[p];
   int i = p-1;
   int j = r+1;
   while (true) {
@@ -201,7 +197,7 @@ int partition(int *array, int p, int r)
     do {
       i = i+1;
     } while (array[i] < x);
-    if (i < j) { // swap degli elementi
+    if (i < j) {
       SWAP(array[j], array[i]);
     } else {
       return j;
@@ -244,7 +240,8 @@ int get_color(int index)
 
 void draw_element(SDL_Renderer *renderer, int element, int x, int width)
 {
-  SDL_SetRenderDrawColor(renderer, get_color(element+150), get_color(element+300), get_color(element+450), 255);
+  SDL_SetRenderDrawColor(renderer, get_color(element+150), get_color(element+300),
+			 get_color(element+450), 255);
   SDL_Rect rect;
   rect.x = x;
   rect.y = WIN_HEIGHT;
