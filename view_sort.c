@@ -17,9 +17,8 @@
 #define WIN_WIDTH 1000
 
 #define FPS 60
-#define TITLE "Sort visualizer"
 
-int delay = 1000;;
+int delay = 1000;
 
 #define SWAP(A, B)  \
 {		    \
@@ -315,7 +314,8 @@ void (*get_algorithm(char *algoritmo))(int*, int)
    return merge_sort;
 }
 
-void usage() {
+void usage(void)
+{
    printf("usage: visualsort [-asnh]\n"
 	     "-a  [algoritmo] algorimi disponibili:\n"
 	     "  * bubble\n"
@@ -326,19 +326,16 @@ void usage() {
 	     "  * radox\n"
 	     "-s  velocità di avanzamento (0-200, default 50)\n"
 	     "-n  numero elementi array (10-1000, default 1000)\n");
-      exit(0);
+      exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
 {
-
-  srand(time(NULL));
   
   SDL_Event event;
-  bool running = true;
 
   int length = 200;
-  int *array = random_array(length, 500);
+  int *array;
 
   pthread_t sort_thread;
 
@@ -380,6 +377,7 @@ int main(int argc, char **argv)
 
   delay = delay*1000/length;
   sort_algorithm = get_algorithm(algoritmo);
+  array = random_array(length, WIN_HEIGHT);
   
   strcpy(title, algoritmo);
   strcat(title, " sort");
@@ -395,11 +393,11 @@ int main(int argc, char **argv)
   args.algoritmo = sort_algorithm;
   pthread_create(&sort_thread, NULL, sort_thread_start, (void *) &args);
   
-  while (running) {
+  while (true) {
 
     if (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
-	running = false;
+	break;
       }
     }
 
