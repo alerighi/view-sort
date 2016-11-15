@@ -32,6 +32,7 @@ struct thread_args {
     int *array;
     int length;
     void (*algoritmo)(int*, int);
+    char title[30];
 };
 
 void heapify(int *heap, int heapsize, int node)
@@ -344,28 +345,21 @@ void usage(void)
     exit(EXIT_SUCCESS);
 }
 
-int main(int argc, char **argv)
+struct thread_args process_cmdline(int argc, char **argv)
 {
-  
-    SDL_Event event;
-
-    int length = 200;
-    int *array;
-
-    pthread_t sort_thread;
-
-    char *algoritmo = "merge";
-    char title[100];
-  
+    struct thread_args args;
     char c;
     int i;
-
-    void (*sort_algorithm)(int*, int);
-  
+    
+    args.length = 200;
+    args.algoritmo = merge_sort;
+    strcpy(args.title,"merge sort");
     while ((c = getopt(argc, argv, "a:hs:n:")) != -1) {
         switch (c) {
         case 'a':
-            algoritmo = optarg;
+            args.algoritmo = get_algorithm(optarg);
+            strcpy(args.title, optarg);
+            strcat(args.title, " sort");
             break;
         case 's':
             i = atoi(optarg);
@@ -382,7 +376,7 @@ int main(int argc, char **argv)
                 printf("Il numero di elementi deve essere compreso fra 10 e 1000!\n"
                        "Viene usato il valore di default 1000\n");
             } else {
-                length = i;
+                args.length = i;
             }
             break;
         case 'h':
@@ -390,25 +384,28 @@ int main(int argc, char **argv)
             usage();
         }
     }
+    args.array = random_array(args.length, WIN_HEIGHT);
+    delay = delay*1000/args.length;
 
-    delay = delay*1000/length;
-    sort_algorithm = get_algorithm(algoritmo);
-    array = random_array(length, WIN_HEIGHT);
+    return args;
+}
+
+int main(int argc, char **argv)
+{
   
-    strcpy(title, algoritmo);
-    strcat(title, " sort");
+    SDL_Event event;
+
+    pthread_t sort_thread;
+
+    struct thread_args args = process_cmdline(argc, argv);
   
     SDL_Init(SDL_INIT_VIDEO);
 
-    SDL_Window *window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow(args.title, SDL_WINDOWPOS_CENTERED,
 		      SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
 						SDL_RENDERER_ACCELERATED);
 
-    struct thread_args args;
-    args.array = array;
-    args.length = length;
-    args.algoritmo = sort_algorithm;
     pthread_create(&sort_thread, NULL, sort_thread_start, (void *) &args);
   
     while (true) {
@@ -419,7 +416,7 @@ int main(int argc, char **argv)
             }
         }
 
-        draw_array(renderer, array, length);
+        draw_array(renderer, args.array, args.length);
         usleep(1000000/FPS);
     }
 
@@ -429,4 +426,3 @@ int main(int argc, char **argv)
     
     return EXIT_SUCCESS;
 }
-
