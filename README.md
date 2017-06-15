@@ -1,12 +1,12 @@
 # View Sort
-Semplice programma per visualizzare graficamente i principali algoritmi di ordinamento
+C program to visualize and compare the performance of the most famouse sorting algorithms.
 
 ### Compilazione
-Compilare il programma con `make`. 
+Compile with `make`. 
 
-La compilazione richiede la libreria SDL2, installatela con il gestore pacchetti del vostro sistema (`apt-get install libsdl2-dev` su Ubuntu/Debian, `brew install sdl2`su OSX)
+The program requires the library SDL2, install that with `apt-get install libsdl2-dev` for Ubuntu/Debian, or `brew install sdl2` for macOS
 
-Il programma è scritto per sistemi UNIX (usa unistd e pthread), pertanto non  possibile compilarlo nativamente su Finestre, se non tramite Cygwin oppure facendolo girare all'interno del subsystem Linux di Windows 10.
+The program runs only on UNIX systems, because it uses `unistd.h` and pthreads. You can try to run that on Windows 10 with WSL, but you need to install a X server. 
 
 ### Esecuzione
-Eseguire il programma da riga di comando con `./view_sort`. Esegurie `./view_sort -h` per visualizzare la lista degli argomenti accettati dal programma.
+Execute the program with `./view_sort`. For a help message about the arguments required by the program, run `./view_sort -h`
