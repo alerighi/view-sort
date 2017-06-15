@@ -1,5 +1,5 @@
 # View Sort
-C program to visualize and compare the performance of the most famouse sorting algorithms.
+C program to visualize and compare the performance of the most famous sorting algorithms.
 
 ### Compilation
 Compile with `make`. 
